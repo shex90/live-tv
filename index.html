@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live TV — کەناڵێن کوردی، وەرزش، فیلم و دراما</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --panel: #131a26;
+      --panel-2: #1a2436;
+      --accent: #22c55e;
+      --accent-2: #3b82f6;
+      --text: #f3f6fb;
+      --muted: #9aa7bd;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
+    }
+
+    .categories {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .cat-btn.active,
+    .cat-btn:hover {
+      background: var(--accent-2);
+      border-color: var(--accent-2);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 18px;
+      padding: 18px 20px;
+      max-width: 1450px;
+      margin: 0 auto;
+    }
+
+    .sidebar {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      height: fit-content;
+    }
+
+    .sidebar h3 {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .channel-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .channel-item {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.2s;
+    }
+
+    .channel-item.active,
+    .channel-item:hover {
+      border-color: var(--accent);
+      background: rgba(34, 197, 94, 0.12);
+    }
+
+    .quality-badge {
+      font-size: 0.72rem;
+      background: rgba(34, 197, 94, 0.18);
+      color: #86efac;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+
+    .player-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .video-box {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      position: relative;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
+
+    .controls-bar {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .now-playing {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .now-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .servers {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .server-btn {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .server-btn.active {
+      background: var(--accent);
+      color: #06210f;
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .custom-stream {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .custom-stream input {
+      flex: 1;
+      min-width: 240px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .play-btn {
+      background: var(--accent-2);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="live-dot"></span>
+      <span>پەخشێ ڕاستەوخۆ — Full HD</span>
+    </div>
+
+    <div class="categories">
+      <button class="cat-btn active" data-cat="kurdish">کەناڵێن کوردی</button>
+      <button class="cat-btn" data-cat="sports">تەپاپێ و وەرزش</button>
+      <button class="cat-btn" data-cat="movies">فیلم</button>
+      <button class="cat-btn" data-cat="drama">دراما</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <aside class="sidebar">
+      <h3 id="listTitle">کەناڵێن کوردی</h3>
+      <div class="channel-list" id="channelList"></div>
+    </aside>
+
+    <section class="player-area">
+      <div class="video-box">
+        <video id="videoPlayer" controls autoplay playsinline></video>
+      </div>
+
+      <div class="controls-bar">
+        <div>
+          <div class="now-playing" id="nowPlaying">کەناڵ هەڵبژێرە</div>
+          <div class="now-sub" id="nowStatus">بێ ڕێکلام • کوالێتی بەرز</div>
+        </div>
+
+        <div class="servers" id="serverButtons"></div>
+      </div>
+
+      <div class="custom-stream">
+        <input
+          type="text"
+          id="customUrlInput"
+          placeholder="لینکا ڕاستەوخۆ یا کەناڵەکێ (.m3u8) ل ڤێرە لێبدە..."
+        />
+        <button class="play-btn" id="playCustomBtn">پەخش بکە</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ل ڤێرە لینکێن ڕاستەوخۆ یێن (.m3u8) یێن هەر کەناڵەکێ دانی
+    const data = {
+      kurdish: [
+        {
+          name: "Rudaw TV",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" },
+            { label: "Server 2", url: "" }
+          ]
+        },
+        {
+          name: "AVA Entertainment",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" },
+            { label: "Server 2", url: "" }
+          ]
+        },
+        {
+          name: "Kurdmax TV",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" },
+            { label: "Server 2", url: "" }
+          ]
+        },
+        {
+          name: "Kurdmax Show",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        },
+        {
+          name: "WAAR TV",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        },
+        {
+          name: "Kurdistan24",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        },
+        {
+          name: "NRT TV",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        },
+        {
+          name: "Kanal8",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        }
+      ],
+      sports: [
+        {
+          name: "Sport HD 1",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" },
+            { label: "Server 2", url: "" }
+          ]
+        },
+        {
+          name: "Football Arena",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        }
+      ],
+      movies: [
+        {
+          name: "Cinema Box HD",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        }
+      ],
+      drama: [
+        {
+          name: "Drama Plus HD",
+          quality: "1080p",
+          servers: [
+            { label: "Server 1", url: "" }
+          ]
+        }
+      ]
+    };
+
+    const titles = {
+      kurdish: "کەناڵێن کوردی",
+      sports: "کەناڵێن وەرزشی",
+      movies: "کەناڵێن فیلمی",
+      drama: "کەناڵێن درامایێ"
+    };
+
+    let currentCat = "kurdish";
+    let currentChannelIndex = 0;
+    let currentServerIndex = 0;
+    let hlsInstance = null;
+
+    const video = document.getElementById("videoPlayer");
+    const channelListEl = document.getElementById("channelList");
+    const serverButtonsEl = document.getElementById("serverButtons");
+    const nowPlayingEl = document.getElementById("nowPlaying");
+    const nowStatusEl = document.getElementById("nowStatus");
+    const listTitleEl = document.getElementById("listTitle");
+
+    function loadStream(url, labelText) {
+      if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+      }
+
+      if (!url) {
+        video.removeAttribute("src");
+        video.load();
+        nowStatusEl.textContent = "هێشتا لینک بۆ ڤی سێرڤەری نەهاتییە دانان — لینکا .m3u8 ل خوارێ لێبدە";
+        return;
+      }
+
+      if (Hls.isSupported() && url.includes(".m3u8")) {
+        hlsInstance = new Hls();
+        hlsInstance.loadSource(url);
+        hlsInstance.attachMedia(video);
+        hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+          video.play().catch(() => {});
+        });
+        nowStatusEl.textContent = `${labelText} • پەخشێ ڕاستەوخۆ بێ ڕێکلام`;
+      } else {
+        video.src = url;
+        video.play().catch(() => {});
+        nowStatusEl.textContent = `${labelText} • لێدانا ڕاستەوخۆ`;
+      }
+    }
+
+    function renderServers() {
+      const channel = data[currentCat][currentChannelIndex];
+      serverButtonsEl.innerHTML = "";
+
+      channel.servers.forEach((srv, idx) => {
+        const btn = document.createElement("button");
+        btn.className = `server-btn ${idx === currentServerIndex ? "active" : ""}`;
+        btn.textContent = srv.label;
+        btn.onclick = () => {
+          currentServerIndex = idx;
+          renderServers();
+          loadStream(srv.url, `${channel.name} (${srv.label})`);
+        };
+        serverButtonsEl.appendChild(btn);
+      });
+    }
+
+    function renderChannels() {
+      listTitleEl.textContent = titles[currentCat];
+      channelListEl.innerHTML = "";
+
+      data[currentCat].forEach((ch, idx) => {
+        const item = document.createElement("div");
+        item.className = `channel-item ${idx === currentChannelIndex ? "active" : ""}`;
+        item.innerHTML = `
+          <span>${ch.name}</span>
+          <span class="quality-badge">${ch.quality}</span>
+        `;
+        item.onclick = () => {
+          currentChannelIndex = idx;
+          currentServerIndex = 0;
+          renderChannels();
+          renderServers();
+          const srv = ch.servers[0];
+          nowPlayingEl.textContent = ch.name;
+          loadStream(srv ? srv.url : "", `${ch.name} (${srv ? srv.label : ""})`);
+        };
+        channelListEl.appendChild(item);
+      });
+
+      const activeCh = data[currentCat][currentChannelIndex];
+      const activeSrv = activeCh.servers[currentServerIndex];
+      nowPlayingEl.textContent = activeCh.name;
+      renderServers();
+      loadStream(activeSrv ? activeSrv.url : "", `${activeCh.name} (${activeSrv ? activeSrv.label : ""})`);
+    }
+
+    document.querySelectorAll(".cat-btn").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll(".cat-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCat = btn.dataset.cat;
+        currentChannelIndex = 0;
+        currentServerIndex = 0;
+        renderChannels();
+      };
+    });
+
+    document.getElementById("playCustomBtn").onclick = () => {
+      const customUrl = document.getElementById("customUrlInput").value.trim();
+      if (!customUrl) return;
+      nowPlayingEl.textContent = "لینکا تایبەت (Custom Stream)";
+      loadStream(customUrl, "پەخشێ دستکاری");
+    };
+
+    renderChannels();
+  </script>
+</body>
+</html>
