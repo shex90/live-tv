@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live TV — کەناڵێن کوردی، وەرزش، فیلم و دراما</title>
+  <title>Live TV Pro — کوردی بادینی و تەپاپێ</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     :root {
-      --bg: #0b0f17;
-      --panel: #131a26;
-      --panel-2: #1a2436;
-      --accent: #22c55e;
-      --accent-2: #3b82f6;
-      --text: #f3f6fb;
-      --muted: #9aa7bd;
+      --bg-main: #070a10;
+      --bg-card: #101622;
+      --bg-item: #161f30;
+      --bg-item-hover: #1e2a40;
+      --primary: #3b82f6;
+      --green: #10b981;
+      --red-live: #e11d48;
+      --red-dark: #9f1239;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
       --border: rgba(255, 255, 255, 0.08);
     }
 
@@ -21,134 +24,276 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: radial-gradient(circle at top right, #11192b, var(--bg-main) 60%);
+      color: var(--text-main);
       min-height: 100vh;
     }
 
     header {
-      background: var(--panel);
+      background: rgba(16, 22, 34, 0.88);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
+      padding: 16px 28px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 1.1rem;
-      font-weight: 700;
+      gap: 12px;
     }
 
-    .live-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ef4444;
-      box-shadow: 0 0 10px #ef4444;
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--red-live), #f43f5e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-text span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     .categories {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      background: var(--bg-main);
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      gap: 6px;
     }
 
     .cat-btn {
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 9px;
       cursor: pointer;
-      font-size: 0.9rem;
-      transition: 0.2s;
+      font-size: 0.94rem;
+      font-weight: 700;
+      transition: all 0.25s ease;
     }
 
-    .cat-btn.active,
     .cat-btn:hover {
-      background: var(--accent-2);
-      border-color: var(--accent-2);
+      color: #fff;
     }
 
-    .container {
+    .cat-btn.active {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+    }
+
+    .admin-icon-btn {
+      background: var(--bg-item);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 10px 14px;
+      border-radius: 11px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .admin-icon-btn:hover,
+    .admin-icon-btn.active {
+      background: #1e293b;
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .main-layout {
       display: grid;
-      grid-template-columns: 310px 1fr;
-      gap: 18px;
-      padding: 18px 20px;
-      max-width: 1450px;
+      grid-template-columns: 355px 1fr;
+      gap: 24px;
+      padding: 24px 28px;
+      max-width: 1550px;
       margin: 0 auto;
     }
 
     .sidebar {
-      background: var(--panel);
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      height: fit-content;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
-    .sidebar h3 {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 12px;
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-header h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .channel-count {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
     }
 
     .channel-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      overflow-y: auto;
+      padding-left: 4px;
     }
 
-    .channel-item {
-      background: var(--panel-2);
+    .channel-list::-webkit-scrollbar {
+      width: 5px;
+    }
+    .channel-list::-webkit-scrollbar-thumb {
+      background: #28354d;
+      border-radius: 10px;
+    }
+
+    .channel-card {
+      background: var(--bg-item);
       border: 1px solid var(--border);
-      padding: 10px 12px;
-      border-radius: 8px;
+      padding: 11px 14px;
+      border-radius: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: 0.2s;
+      transition: all 0.2s ease;
     }
 
-    .channel-item.active,
-    .channel-item:hover {
-      border-color: var(--accent);
-      background: rgba(34, 197, 94, 0.12);
+    .channel-card:hover {
+      background: var(--bg-item-hover);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.18);
     }
 
-    .quality-badge {
-      font-size: 0.72rem;
-      background: rgba(34, 197, 94, 0.18);
-      color: #86efac;
-      padding: 3px 7px;
-      border-radius: 5px;
-      font-weight: 600;
+    .channel-card.active {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.04));
+      border-color: var(--green);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
     }
 
-    .player-area {
+    .ch-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ch-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.82rem;
+      color: #fff;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .ch-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ch-details {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 3px;
     }
 
-    .video-box {
+    .ch-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .ch-sub {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .quality-tag {
+      font-size: 0.72rem;
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .player-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .video-wrapper {
       background: #000;
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
       aspect-ratio: 16 / 9;
       position: relative;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     }
 
     video {
@@ -158,351 +303,556 @@
       background: #000;
     }
 
-    .controls-bar {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
+    .red-bar {
+      background: linear-gradient(135deg, var(--red-live), #be123c);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 14px 20px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: 0 8px 25px rgba(225, 29, 72, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .now-playing {
-      font-size: 1rem;
-      font-weight: 700;
+    .red-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .now-sub {
+    .live-pill {
+      background: #ffffff;
+      color: var(--red-live);
+      font-weight: 900;
       font-size: 0.85rem;
-      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red-live);
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+      100% { transform: scale(0.95); opacity: 1; }
+    }
+
+    .playing-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+    }
+
+    .playing-status {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.9);
       margin-top: 2px;
     }
 
-    .servers {
+    .red-bar-left {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    .server-btn {
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 7px 14px;
-      border-radius: 7px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-
-    .server-btn.active {
-      background: var(--accent);
-      color: #06210f;
-      border-color: var(--accent);
+    .quality-status {
+      background: rgba(0, 0, 0, 0.28);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.84rem;
       font-weight: 700;
     }
 
-    .custom-stream {
-      background: var(--panel);
+    .fullscreen-btn {
+      background: #ffffff;
+      color: var(--red-live);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 900;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .fullscreen-btn:hover {
+      background: #fff1f2;
+      transform: scale(1.03);
+    }
+
+    .admin-drawer {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .admin-drawer.open {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .admin-drawer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-drawer-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #93c5fd;
+    }
+
+    .admin-close-btn {
+      background: transparent;
+      color: var(--text-muted);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .admin-controls {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .custom-stream input {
-      flex: 1;
-      min-width: 240px;
-      background: var(--panel-2);
+    .admin-controls input,
+    .admin-controls select {
+      background: var(--bg-item);
       border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 8px;
+      color: var(--text-main);
+      padding: 10px 13px;
+      border-radius: 9px;
       outline: none;
+      font-size: 0.88rem;
     }
 
-    .play-btn {
-      background: var(--accent-2);
+    .admin-controls input {
+      flex: 1;
+      min-width: 210px;
+    }
+
+    .admin-test-btn {
+      background: var(--primary);
       color: #fff;
       border: none;
       padding: 10px 18px;
-      border-radius: 8px;
+      border-radius: 9px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.88rem;
     }
 
-    @media (max-width: 900px) {
-      .container {
+    .admin-add-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .admin-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-sub-label {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    @media (max-width: 960px) {
+      .main-layout {
         grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .sidebar {
+        height: auto;
+        max-height: 420px;
       }
     }
   </style>
 </head>
 <body>
+
   <header>
     <div class="brand">
-      <span class="live-dot"></span>
-      <span>پەخشێ ڕاستەوخۆ — Full HD</span>
+      <div class="brand-icon">TV</div>
+      <div class="brand-text">
+        <h1>پەخشێ ڕاستەوخۆ — Live HD</h1>
+        <span>کوالێتی بەرز • بێ ڕێکلام</span>
+      </div>
     </div>
 
-    <div class="categories">
-      <button class="cat-btn active" data-cat="kurdish">کەناڵێن کوردی</button>
-      <button class="cat-btn" data-cat="sports">تەپاپێ و وەرزش</button>
-      <button class="cat-btn" data-cat="movies">فیلم</button>
-      <button class="cat-btn" data-cat="drama">دراما</button>
+    <div class="header-actions">
+      <div class="categories">
+        <button class="cat-btn active" data-cat="kurdish_badini">کوردی بادینی</button>
+        <button class="cat-btn" data-cat="sports">تەپاپێ</button>
+      </div>
+
+      <button class="admin-icon-btn" id="adminToggleBtn" type="button" title="Admin">
+        <span>🛡️</span>
+        <span>Admin</span>
+      </button>
     </div>
   </header>
 
-  <main class="container">
+  <main class="main-layout">
     <aside class="sidebar">
-      <h3 id="listTitle">کەناڵێن کوردی</h3>
+      <div class="sidebar-header">
+        <h3 id="listTitle">کەناڵێن کوردی بادینی</h3>
+        <span class="channel-count" id="channelCount">9 کەناڵ</span>
+      </div>
       <div class="channel-list" id="channelList"></div>
     </aside>
 
-    <section class="player-area">
-      <div class="video-box">
+    <section class="player-section">
+      <div class="video-wrapper" id="videoContainer">
         <video id="videoPlayer" controls autoplay playsinline></video>
       </div>
 
-      <div class="controls-bar">
-        <div>
-          <div class="now-playing" id="nowPlaying">کەناڵ هەڵبژێرە</div>
-          <div class="now-sub" id="nowStatus">بێ ڕێکلام • کوالێتی بەرز</div>
+      <div class="red-bar">
+        <div class="red-bar-right">
+          <span class="live-pill">
+            <span class="pulse-dot"></span>
+            LIVE
+          </span>
+          <div>
+            <div class="playing-title" id="nowPlaying">کەناڵ هەڵبژێرە</div>
+            <div class="playing-status" id="nowStatus">پەخشێ ڕاستەوخۆ (LIVE) • بێ ڕێکلام</div>
+          </div>
         </div>
 
-        <div class="servers" id="serverButtons"></div>
+        <div class="red-bar-left">
+          <span class="quality-status" id="qualityIndicator">Auto: 1080p</span>
+          <button class="fullscreen-btn" id="fullscreenBtn" type="button">
+            <span>⛶</span>
+            <span>پڕکرنا شاشێ</span>
+          </button>
+        </div>
       </div>
 
-      <div class="custom-stream">
-        <input
-          type="text"
-          id="customUrlInput"
-          placeholder="لینکا ڕاستەوخۆ یا کەناڵەکێ (.m3u8) ل ڤێرە لێبدە..."
-        />
-        <button class="play-btn" id="playCustomBtn">پەخش بکە</button>
+      <div class="admin-drawer" id="adminDrawer">
+        <div class="admin-drawer-top">
+          <span class="admin-drawer-title">🛡️ Admin — تاقیکرن و زێدەکرنا کەناڵێن نوو</span>
+          <button class="admin-close-btn" id="adminCloseBtn" type="button">داخستن و قفلکرن</button>
+        </div>
+
+        <div class="admin-sub-label">تاقیکرنا لینکا (.m3u8)</div>
+        <div class="admin-controls">
+          <input
+            type="text"
+            id="adminTestInput"
+            placeholder="لینکا .m3u8 بۆ تاقیکرنێ ل ڤێرە لێبدە..."
+          />
+          <button class="admin-test-btn" id="adminTestBtn" type="button">تاقی بکە</button>
+        </div>
+
+        <hr class="admin-divider" />
+
+        <div class="admin-sub-label">زێدەکرنا کەناڵەکا نوو بۆ لیستێ</div>
+        <div class="admin-controls">
+          <select id="newChCat">
+            <option value="kurdish_badini">کوردی بادینی</option>
+            <option value="sports">تەپاپێ</option>
+          </select>
+          <input type="text" id="newChName" placeholder="ناڤێ کەناڵی (نموونە: Duhok HD)" />
+          <input type="text" id="newChShort" placeholder="کورتکرنا لۆگۆ (نموونە: DHK)" />
+          <input type="text" id="newChUrl" placeholder="لینکا پەخشێ (.m3u8)" />
+          <button class="admin-add-btn" id="adminAddBtn" type="button">زێدە بکە</button>
+        </div>
       </div>
     </section>
   </main>
 
   <script>
-    // ل ڤێرە لینکێن ڕاستەوخۆ یێن (.m3u8) یێن هەر کەناڵەکێ دانی
-    const data = {
-      kurdish: [
-        {
-          name: "Rudaw TV",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" },
-            { label: "Server 2", url: "" }
-          ]
-        },
-        {
-          name: "AVA Entertainment",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" },
-            { label: "Server 2", url: "" }
-          ]
-        },
-        {
-          name: "Kurdmax TV",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" },
-            { label: "Server 2", url: "" }
-          ]
-        },
-        {
-          name: "Kurdmax Show",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        },
+    const ADMIN_SECRET_CODE = "9036";
+
+    const channelsData = {
+      kurdish_badini: [
+        { name: "Kurdmax HD", short: "KM", color: "linear-gradient(135deg, #be123c, #881337)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Kurdmax Show", short: "SHOW", color: "linear-gradient(135deg, #c026d3, #701a75)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Dasanya TV", short: "DSN", color: "linear-gradient(135deg, #d97706, #78350f)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Duhok TV", short: "DHK", color: "linear-gradient(135deg, #1d4ed8, #1e3a8a)", logoUrl: "", quality: "1080p", serverUrl: "" },
         {
           name: "WAAR TV",
+          short: "WAAR",
+          color: "linear-gradient(135deg, #047857, #064e3b)",
+          logoUrl: "",
           quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
+          serverUrl: "https://hlspackager.akamaized.net/live/DB/WAAR_HD/HLS/WAAR_HD.m3u8"
         },
-        {
-          name: "Kurdistan24",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        },
-        {
-          name: "NRT TV",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        },
-        {
-          name: "Kanal8",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        }
+        { name: "Rudaw HD", short: "RDW", color: "linear-gradient(135deg, #dc2626, #7f1d1d)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "AVA Entertainment", short: "AVA", color: "linear-gradient(135deg, #6d28d9, #4c1d95)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Zaxo TV", short: "ZXO", color: "linear-gradient(135deg, #0369a1, #0c4a6e)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "ATV Kurd", short: "ATV", color: "linear-gradient(135deg, #ea580c, #7c2d12)", logoUrl: "", quality: "1080p", serverUrl: "" }
       ],
       sports: [
-        {
-          name: "Sport HD 1",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" },
-            { label: "Server 2", url: "" }
-          ]
-        },
-        {
-          name: "Football Arena",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        }
-      ],
-      movies: [
-        {
-          name: "Cinema Box HD",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        }
-      ],
-      drama: [
-        {
-          name: "Drama Plus HD",
-          quality: "1080p",
-          servers: [
-            { label: "Server 1", url: "" }
-          ]
-        }
+        { name: "AVA Sport 1", short: "AS1", color: "linear-gradient(135deg, #7c3aed, #4c1d95)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "AVA Sport 2", short: "AS2", color: "linear-gradient(135deg, #5b21b6, #2e1065)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "NRT Sport", short: "NRT", color: "linear-gradient(135deg, #ea580c, #7c2d12)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Duhok Sport", short: "DHS", color: "linear-gradient(135deg, #2563eb, #172554)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Zaxo Sport", short: "ZXS", color: "linear-gradient(135deg, #0284c7, #082f49)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "Dasanya Sport", short: "DSS", color: "linear-gradient(135deg, #b45309, #451a03)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 1 HD", short: "beIN 1", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 2 HD", short: "beIN 2", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 3 HD", short: "beIN 3", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 4 HD", short: "beIN 4", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 5 HD", short: "beIN 5", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 6 HD", short: "beIN 6", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 7 HD", short: "beIN 7", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" },
+        { name: "beIN Sports 8 HD", short: "beIN 8", color: "linear-gradient(135deg, #6b21a8, #3b0764)", logoUrl: "", quality: "1080p", serverUrl: "" }
       ]
     };
 
-    const titles = {
-      kurdish: "کەناڵێن کوردی",
-      sports: "کەناڵێن وەرزشی",
-      movies: "کەناڵێن فیلمی",
-      drama: "کەناڵێن درامایێ"
+    const categoryTitles = {
+      kurdish_badini: "کەناڵێن کوردی بادینی",
+      sports: "کەناڵێن تەپاپێ"
     };
 
-    let currentCat = "kurdish";
-    let currentChannelIndex = 0;
-    let currentServerIndex = 0;
-    let hlsInstance = null;
+    let currentCategory = "kurdish_badini";
+    let activeIndex = 0;
+    let hls = null;
 
-    const video = document.getElementById("videoPlayer");
+    const videoEl = document.getElementById("videoPlayer");
+    const videoWrapper = document.getElementById("videoContainer");
     const channelListEl = document.getElementById("channelList");
-    const serverButtonsEl = document.getElementById("serverButtons");
+    const listTitleEl = document.getElementById("listTitle");
+    const channelCountEl = document.getElementById("channelCount");
     const nowPlayingEl = document.getElementById("nowPlaying");
     const nowStatusEl = document.getElementById("nowStatus");
-    const listTitleEl = document.getElementById("listTitle");
+    const qualityIndicatorEl = document.getElementById("qualityIndicator");
+    const adminDrawerEl = document.getElementById("adminDrawer");
+    const adminToggleBtn = document.getElementById("adminToggleBtn");
 
-    function loadStream(url, labelText) {
-      if (hlsInstance) {
-        hlsInstance.destroy();
-        hlsInstance = null;
+    function lockAdminPanel() {
+      adminDrawerEl.classList.remove("open");
+      adminToggleBtn.classList.remove("active");
+    }
+
+    function setQualityText(height) {
+      if (!height) {
+        qualityIndicatorEl.textContent = "Auto: 1080p";
+        return;
+      }
+      if (height <= 720) {
+        qualityIndicatorEl.textContent = `Auto: ${height}p (خاو)`;
+      } else {
+        qualityIndicatorEl.textContent = `Auto: ${height}p`;
+      }
+    }
+
+    function playStreamUrl(url, titleText, statusText) {
+      nowPlayingEl.textContent = titleText;
+      setQualityText(null);
+
+      if (hls) {
+        hls.destroy();
+        hls = null;
       }
 
       if (!url) {
-        video.removeAttribute("src");
-        video.load();
-        nowStatusEl.textContent = "هێشتا لینک بۆ ڤی سێرڤەری نەهاتییە دانان — لینکا .m3u8 ل خوارێ لێبدە";
+        videoEl.removeAttribute("src");
+        videoEl.load();
+        nowStatusEl.textContent = statusText || "پەخشێ ڤی کەناڵی نێزیکە دێ بەردەست بیت";
         return;
       }
 
       if (Hls.isSupported() && url.includes(".m3u8")) {
-        hlsInstance = new Hls();
-        hlsInstance.loadSource(url);
-        hlsInstance.attachMedia(video);
-        hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play().catch(() => {});
+        hls = new Hls({
+          capLevelToPlayerSize: false,
+          abrEwmaDefaultEstimate: 2500000,
+          liveSyncDurationCount: 3,
+          liveMaxLatencyDurationCount: 6
         });
-        nowStatusEl.textContent = `${labelText} • پەخشێ ڕاستەوخۆ بێ ڕێکلام`;
+        hls.loadSource(url);
+        hls.attachMedia(videoEl);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          videoEl.play().catch(() => {});
+        });
+
+        hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+          const level = hls.levels[data.level];
+          if (level && level.height) {
+            setQualityText(level.height);
+            nowStatusEl.textContent = `پەخشێ ڕاستەوخۆ (LIVE) • کوالێتی ${level.height}p`;
+          }
+        });
+
+        nowStatusEl.textContent = statusText || "پەخشێ ڕاستەوخۆ (LIVE) • بێ ڕێکلام";
       } else {
-        video.src = url;
-        video.play().catch(() => {});
-        nowStatusEl.textContent = `${labelText} • لێدانا ڕاستەوخۆ`;
+        videoEl.src = url;
+        videoEl.play().catch(() => {});
+        nowStatusEl.textContent = statusText || "پەخشێ ڕاستەوخۆ (LIVE) • بێ ڕێکلام";
       }
     }
 
-    function renderServers() {
-      const channel = data[currentCat][currentChannelIndex];
-      serverButtonsEl.innerHTML = "";
-
-      channel.servers.forEach((srv, idx) => {
-        const btn = document.createElement("button");
-        btn.className = `server-btn ${idx === currentServerIndex ? "active" : ""}`;
-        btn.textContent = srv.label;
-        btn.onclick = () => {
-          currentServerIndex = idx;
-          renderServers();
-          loadStream(srv.url, `${channel.name} (${srv.label})`);
-        };
-        serverButtonsEl.appendChild(btn);
-      });
+    function playChannel(channel) {
+      playStreamUrl(
+        channel.serverUrl,
+        channel.name,
+        channel.serverUrl ? "پەخشێ ڕاستەوخۆ (LIVE) • بێ ڕێکلام" : "پەخشێ ڤی کەناڵی نێزیکە دێ بەردەست بیت"
+      );
     }
 
-    function renderChannels() {
-      listTitleEl.textContent = titles[currentCat];
+    function renderUI() {
+      const list = channelsData[currentCategory];
+      listTitleEl.textContent = categoryTitles[currentCategory];
+      channelCountEl.textContent = `${list.length} کەناڵ`;
       channelListEl.innerHTML = "";
 
-      data[currentCat].forEach((ch, idx) => {
-        const item = document.createElement("div");
-        item.className = `channel-item ${idx === currentChannelIndex ? "active" : ""}`;
-        item.innerHTML = `
-          <span>${ch.name}</span>
-          <span class="quality-badge">${ch.quality}</span>
+      list.forEach((ch, idx) => {
+        const card = document.createElement("div");
+        card.className = `channel-card ${idx === activeIndex ? "active" : ""}`;
+
+        const logoHTML = ch.logoUrl
+          ? `<img src="${ch.logoUrl}" alt="${ch.name}" />`
+          : `<span>${ch.short}</span>`;
+
+        card.innerHTML = `
+          <div class="ch-info">
+            <div class="ch-logo" style="background: ${ch.color};">
+              ${logoHTML}
+            </div>
+            <div class="ch-details">
+              <div class="ch-name">${ch.name}</div>
+              <div class="ch-sub">Server 1 • Live Stream</div>
+            </div>
+          </div>
+          <span class="quality-tag">${ch.quality}</span>
         `;
-        item.onclick = () => {
-          currentChannelIndex = idx;
-          currentServerIndex = 0;
-          renderChannels();
-          renderServers();
-          const srv = ch.servers[0];
-          nowPlayingEl.textContent = ch.name;
-          loadStream(srv ? srv.url : "", `${ch.name} (${srv ? srv.label : ""})`);
+
+        card.onclick = () => {
+          activeIndex = idx;
+          renderUI();
         };
-        channelListEl.appendChild(item);
+
+        channelListEl.appendChild(card);
       });
 
-      const activeCh = data[currentCat][currentChannelIndex];
-      const activeSrv = activeCh.servers[currentServerIndex];
-      nowPlayingEl.textContent = activeCh.name;
-      renderServers();
-      loadStream(activeSrv ? activeSrv.url : "", `${activeCh.name} (${activeSrv ? activeSrv.label : ""})`);
+      if (list[activeIndex]) {
+        playChannel(list[activeIndex]);
+      }
     }
 
     document.querySelectorAll(".cat-btn").forEach((btn) => {
       btn.onclick = () => {
         document.querySelectorAll(".cat-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        currentCat = btn.dataset.cat;
-        currentChannelIndex = 0;
-        currentServerIndex = 0;
-        renderChannels();
+        currentCategory = btn.dataset.cat;
+        activeIndex = 0;
+        renderUI();
       };
     });
 
-    document.getElementById("playCustomBtn").onclick = () => {
-      const customUrl = document.getElementById("customUrlInput").value.trim();
-      if (!customUrl) return;
-      nowPlayingEl.textContent = "لینکا تایبەت (Custom Stream)";
-      loadStream(customUrl, "پەخشێ دستکاری");
+    adminToggleBtn.onclick = () => {
+      if (adminDrawerEl.classList.contains("open")) {
+        return;
+      }
+
+      const codeInput = prompt("کۆدێ نهێنی یێ Admin ب نڤیسە:");
+      if (codeInput === null) return;
+
+      if (codeInput.trim() === ADMIN_SECRET_CODE) {
+        adminDrawerEl.classList.add("open");
+        adminToggleBtn.classList.add("active");
+      } else {
+        alert("کۆد یێ شاشە!");
+      }
     };
 
-    renderChannels();
+    document.getElementById("adminCloseBtn").onclick = () => {
+      lockAdminPanel();
+    };
+
+    document.getElementById("adminTestBtn").onclick = () => {
+      const testUrl = document.getElementById("adminTestInput").value.trim();
+      if (!testUrl) return;
+      playStreamUrl(testUrl, "تاقیکرنا Admin", "پەخشێ تاقیکرنێ (.m3u8)");
+    };
+
+    document.getElementById("adminAddBtn").onclick = () => {
+      const targetCat = document.getElementById("newChCat").value;
+      const nameVal = document.getElementById("newChName").value.trim();
+      const shortVal = (document.getElementById("newChShort").value.trim() || nameVal.slice(0, 3)).toUpperCase();
+      const urlVal = document.getElementById("newChUrl").value.trim();
+
+      if (!nameVal) {
+        alert("ناڤێ کەناڵی ب نڤیسە");
+        return;
+      }
+
+      const palette = targetCat === "sports"
+        ? "linear-gradient(135deg, #2563eb, #1e3a8a)"
+        : "linear-gradient(135deg, #059669, #064e3b)";
+
+      channelsData[targetCat].push({
+        name: nameVal,
+        short: shortVal,
+        color: palette,
+        logoUrl: "",
+        quality: "1080p",
+        serverUrl: urlVal
+      });
+
+      document.getElementById("newChName").value = "";
+      document.getElementById("newChShort").value = "";
+      document.getElementById("newChUrl").value = "";
+
+      currentCategory = targetCat;
+      activeIndex = channelsData[targetCat].length - 1;
+      document.querySelectorAll(".cat-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.cat === currentCategory);
+      });
+      renderUI();
+    };
+
+    document.getElementById("fullscreenBtn").onclick = () => {
+      const el = videoWrapper || videoEl;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+    };
+
+    renderUI();
   </script>
 </body>
 </html>
